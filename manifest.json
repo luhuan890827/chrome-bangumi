@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+
+  "name": "chrome-bangumi",
+  "description": "an extention to inform the user as soon as the new bangumi comes up",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "resources/icon.png",
+    "default_popup": "index.html"
+  },
+  "permissions": [
+    "http://share.dmhy.org/"
+  ]
+}
