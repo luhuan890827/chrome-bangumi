@@ -11,5 +11,8 @@
   },
   "permissions": [
     "http://share.dmhy.org/"
-  ]
+  ],
+  "background":{
+    "scripts":["src/js/app/background.js"]
+  }
 }
