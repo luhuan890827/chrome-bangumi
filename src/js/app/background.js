@@ -4,6 +4,7 @@
 (function () {
     'use strict'
     var confObj = getConf();
+    var imgReg = /<img.+src="(.+)".+>/
     var latestItem
     var getNotificationId =(function (){
         var _id=0;
@@ -71,25 +72,34 @@
             //todo????
             var img = new Image();
             var timeoutId = setTimeout(function(){
-                resolve('resources/icon.png')
+                resolve()
             },4000)
             img.onload = function () {
-                console.log('###################')
+                //console.log('###################')
                 clearTimeout(timeoutId)
                 resolve(itemData.gImage)
             }
 
-            //img.src = itemData.gImage
+            if(itemData.gImage){
+                img.src = itemData.gImage
+
+            }
 
         }).then(function (imgUrl) {
               return new Promise(function (resolve, reject) {
-                  chrome.notifications.create(getNotificationId(), {
+                  var notSetting = {
                       type: "basic",
                       title: itemData.title,
-                      message: "Primary message to display",
-                      //iconUrl: itemData.gImage
-                      iconUrl: imgUrl
-                  }, function () {
+                      message: "来自动漫花园",
+                      iconUrl: 'resources/icon.png'
+
+                     // ,imageUrl:'resources/Kiseijuu.jpg'
+
+                  }
+                  //if(imgUrl){
+                  //    notSetting.imageUrl = imgUrl
+                  //}
+                  chrome.notifications.create(getNotificationId(), notSetting, function () {
                       resolve(itemData);
                   });
               })
@@ -103,9 +113,18 @@
         obj.pubDate = new Date(mNode.getElementsByTagName('pubDate')[0].textContent)
         obj.magnet = mNode.getElementsByTagName('enclosure')[0].attributes[0].value;
         var desc = mNode.getElementsByTagName('description')[0].childNodes[0].textContent
-        //todo 这里会尝试获取图片，最好换一种方式
-        var $ele = $(desc);
-        obj.gImage = $ele.find('img').attr('src');
+
+
+
+        //console.log(desc.match(imgReg))
+
+        //var $ele = $(desc);
+
+        var temp = desc.match(imgReg)
+        if(temp){
+            obj.gImage =temp [1];
+        }
+
         return obj
     }
 
