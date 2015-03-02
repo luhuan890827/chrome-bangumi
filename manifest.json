@@ -11,6 +11,8 @@
     "background",
     "notifications",
     "http://share.dmhy.org/"
+    ,"http://www.wmsub.com/"
+    ,"http://*.sinaimg.cn/"
   ],
   "background": {
     "scripts": [

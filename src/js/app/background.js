@@ -7,9 +7,10 @@
     var manifest = chrome.runtime.getManifest();
     var _port = {}
     var confObj = getConf();
-    var imgReg = /<img.+src="(.+)".+>/
+    var imgReg = /<img.+src="(.+)\.(jpg|png|jpeg|gif)".+>/i
     var latestItem
-    var notificationButtons= [
+    var notifiedItems = {}
+    var notificationButtons = [
         {title: "查看发布页"},
         {title: "复制磁力链"}
     ]
@@ -21,7 +22,7 @@
         }
     })()
 
-    setInterval(function () {
+    var intervalId = setInterval(function () {
 
         queryJob()
           .then(function (allInf) {
@@ -32,9 +33,9 @@
           })
           .then(function (latestRes) {
               //if (!latestItem || latestItem.title !== latestRes.title) {
-                  latestItem = latestRes;
-                  makeNotification(latestRes).then(function () {
-                  })
+              latestItem = latestRes;
+              makeNotification(latestRes).then(function () {
+              })
               //}
 
           })
@@ -42,9 +43,16 @@
 
     chrome.notifications.onButtonClicked.addListener(onNotificationButtonClick);
 
-    function onNotificationButtonClick(notificationId,buttonIndex){
-        console.log(notificationId);
-        console.log(buttonIndex);
+    function onNotificationButtonClick(notificationId, buttonIndex) {
+        var bangumiData = notifiedItems[notificationId + '']
+        if (buttonIndex === 0) {
+            //查看发布页面
+            window.open(bangumiData.link)
+        }
+        if (buttonIndex === 1) {
+            //复制磁力链接
+            clipTextToClipBoard(bangumiData.magnet)
+        }
 
     }
 
@@ -69,6 +77,16 @@
           })
     }
 
+    function clipTextToClipBoard(str /*,mimetype*/) {
+        document.oncopy = function (event) {
+            //event.clipboardData.setData(mimetype, str);
+            event.clipboardData.setData('text/plain', str);
+            event.preventDefault();
+            //todo show Toast tips
+        };
+        document.execCommand("Copy", false, null);
+    }
+
     function getConf() {
         var confObj = JSON.parse(localStorage.getItem('conf')) || {};
         if (Object.keys(confObj).length == 0) {
@@ -79,6 +97,8 @@
             confObj.keyword = '';
             localStorage.setItem('conf', JSON.stringify(confObj))
         }
+        //todo for test
+        confObj.mInterval = 10000;
 
         return confObj
     }
@@ -86,43 +106,35 @@
     //todo preload image before notification
     function makeNotification(itemData) {
 
-        return new Promise(function (resolve, reject) {
-
-            var img = new Image();
-            var timeoutId = setTimeout(function () {
-                resolve()
-            }, 4000)
-            img.onload = function () {
-                //console.log('###################')
-                clearTimeout(timeoutId)
-                resolve(itemData.gImage)
-            }
-
-            if (itemData.gImage) {
-                img.src = itemData.gImage
-
-            }
-
-        }).then(function (imgUrl) {
+        return bangumiUtils
+          .getImgDataURL(itemData.gImage)
+          .then(function (dataURL) {
               return new Promise(function (resolve, reject) {
                   var notSetting = {
-                      type: "basic",
+                      type: "image",
                       title: itemData.title,
                       message: "来自动漫花园",
                       iconUrl: 'resources/icon.png',
                       buttons: notificationButtons
-
-                      // ,imageUrl:'resources/Kiseijuu.jpg'
+                      //the doc says resources can only use local image or dataURL here
+                      , imageUrl: dataURL
 
                   }
-                  //if(imgUrl){
-                  //    notSetting.imageUrl = imgUrl
-                  //}
-                  chrome.notifications.create(getNotificationId(), notSetting, function () {
-                      resolve(itemData);
-                  });
+
+                  var itemId = getNotificationId();
+                  notifiedItems[itemId] = itemData;
+                  chrome
+                    .notifications
+                    .create(itemId, notSetting, function () {
+                        resolve(itemData);
+                    });
+              }, function () {
+                  //on reject
+                  console.log(arguments)
               })
           })
+
+
     }
 
     function parseItem(mNode) {
@@ -137,9 +149,10 @@
 
         //var $ele = $(desc);
 
-        var temp = desc.match(imgReg)
+       var temp = desc.match(imgReg)
+       // var temp = imgReg.exec(desc)
         if (temp) {
-            obj.gImage = temp [1];
+            obj.gImage = temp [1]+'.'+temp[2];
         }
 
         return obj
