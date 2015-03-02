@@ -2,15 +2,22 @@
  * Created by laury.lu on 2015/2/27.
  */
 (function () {
+    //todo 把notification相关功能移至notifications.js文件
     'use strict'
+    var manifest = chrome.runtime.getManifest();
+    var _port = {}
     var confObj = getConf();
     var imgReg = /<img.+src="(.+)".+>/
     var latestItem
-    var getNotificationId =(function (){
-        var _id=0;
-        return function(){
+    var notificationButtons= [
+        {title: "查看发布页"},
+        {title: "复制磁力链"}
+    ]
+    var getNotificationId = (function () {
+        var _id = 0;
+        return function () {
             _id++;
-            return _id+'';
+            return _id + '';
         }
     })()
 
@@ -24,13 +31,23 @@
               })[0]
           })
           .then(function (latestRes) {
-              if(!latestItem||latestItem.title!==latestRes.title){
+              //if (!latestItem || latestItem.title !== latestRes.title) {
                   latestItem = latestRes;
-                  makeNotification(latestRes).then(function(){})
-              }
+                  makeNotification(latestRes).then(function () {
+                  })
+              //}
 
           })
     }, confObj.mInterval)
+
+    chrome.notifications.onButtonClicked.addListener(onNotificationButtonClick);
+
+    function onNotificationButtonClick(notificationId,buttonIndex){
+        console.log(notificationId);
+        console.log(buttonIndex);
+
+    }
+
     function queryJob() {
         var url = String.format('http://share.dmhy.org/topics/rss/{0}/{1}/{2}/rss.xml', '', '', '')
         return fetch(url)
@@ -65,22 +82,23 @@
 
         return confObj
     }
+
     //todo preload image before notification
     function makeNotification(itemData) {
 
         return new Promise(function (resolve, reject) {
-            //todo????
+
             var img = new Image();
-            var timeoutId = setTimeout(function(){
+            var timeoutId = setTimeout(function () {
                 resolve()
-            },4000)
+            }, 4000)
             img.onload = function () {
                 //console.log('###################')
                 clearTimeout(timeoutId)
                 resolve(itemData.gImage)
             }
 
-            if(itemData.gImage){
+            if (itemData.gImage) {
                 img.src = itemData.gImage
 
             }
@@ -91,9 +109,10 @@
                       type: "basic",
                       title: itemData.title,
                       message: "来自动漫花园",
-                      iconUrl: 'resources/icon.png'
+                      iconUrl: 'resources/icon.png',
+                      buttons: notificationButtons
 
-                     // ,imageUrl:'resources/Kiseijuu.jpg'
+                      // ,imageUrl:'resources/Kiseijuu.jpg'
 
                   }
                   //if(imgUrl){
@@ -114,15 +133,13 @@
         obj.magnet = mNode.getElementsByTagName('enclosure')[0].attributes[0].value;
         var desc = mNode.getElementsByTagName('description')[0].childNodes[0].textContent
 
-
-
         //console.log(desc.match(imgReg))
 
         //var $ele = $(desc);
 
         var temp = desc.match(imgReg)
-        if(temp){
-            obj.gImage =temp [1];
+        if (temp) {
+            obj.gImage = temp [1];
         }
 
         return obj
