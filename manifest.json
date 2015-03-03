@@ -13,6 +13,7 @@
     "http://share.dmhy.org/"
     ,"http://www.wmsub.com/"
     ,"http://*.sinaimg.cn/"
+    ,"http://*/"
   ],
   "content_security_policy":"script-src 'self';object-src 'self'",
   "background": {
@@ -21,5 +22,8 @@
       "./src/js/lib/require-2.1.16.js",
       "./src/js/app/bgMain.js"
     ]
+  },
+  "sandbox":{
+    "pages":["src/html/popup.html"]
   }
 }

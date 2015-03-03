@@ -37,13 +37,13 @@ define(function(require,exports,module){
                         });
                   }
 
-              }, function () {
-                  //on reject
-                  console.log(arguments)
               })
           })
 
 
+    }
+    function reshow(notiId){
+        //todo http://stackoverflow.com/questions/26350747/chrome-notifications-update-or-create/26358154#26358154
     }
     chrome.notifications.onButtonClicked.addListener(onNotificationButtonClick);
 

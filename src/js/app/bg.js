@@ -9,23 +9,24 @@ define(function (require, exports, module) {
     var rss = require('rss')
     var isStarted = false;
     var intervalId = -1;
-    var mInterval = 30*60*1000
+    var mInterval = 20*1000
 
     function loopCall(){
         console.log('fetch rss.....')
         rss
-          .query()
-          .then(function (infoArr) {
-              var latest = infoArr.sort()[0]
-              notification
-                .create(latest)
-                .then(function () {
-                    //callback after notification created
+            .query()
+            .then(function (infoArr) {
+                var latest = infoArr.sort()[0]
+                return notification
+                    .create(latest)
 
-                })
-          },function(){
-              console.log('bangumi already notified..........')
-          })
+            })
+            .then(function (itemData) {
+                //after notification show
+            })
+            .catch(function(){
+                console.error(arguments)
+            })
     }
     function stop() {
         clearInterval(intervalId)

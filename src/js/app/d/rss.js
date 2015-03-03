@@ -21,6 +21,8 @@ define(function (require, exports, module) {
         // var temp = imgReg.exec(desc)
         if (temp) {
             obj.image = temp [1] + '.' + temp[2];
+        }else{
+            obj.image="resources/Kiseijuu.jpg"
         }
 
         return obj
