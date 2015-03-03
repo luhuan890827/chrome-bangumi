@@ -4,7 +4,10 @@ define(function(require,exports,module){
     function init(){
         ko.applyBindings(new vm.AppVM());
     }
-    module.exports = {
+
+
+
+    module.exports={
         init:init
     }
 })

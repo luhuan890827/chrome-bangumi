@@ -1,13 +1,11 @@
 /**
  * Created by laury.lu on 2015/2/27.
  */
-(function () {
-    'use strict'
-    //anyway we need server resources
+define(function(require,exports,module){
     var canvas = document.createElement('CANVAS'),
-        ctx = canvas.getContext('2d')
-    var utils = {};
-    utils.getImgDataURL = function (url) {
+      ctx = canvas.getContext('2d')
+
+     function getImgDataURL(url) {
         //we can just use fetch here,with server support todo
         //url="http://ww4.sinaimg.cn/bmiddle/9e6b7fdbtw1eprf2rusu5j20ex0octcn.jpg";
         //return fetch(url)
@@ -47,7 +45,18 @@
 
         })
     }
+    function copyTextToClipBoard(str /*,mimetype*/) {
+        document.oncopy = function (event) {
+            //event.clipboardData.setData(mimetype, str);
+            event.clipboardData.setData('text/plain', str);
+            event.preventDefault();
+            //todo show Toast tips
+        };
+        document.execCommand("Copy", false, null);
+    }
+    module.exports = {
+        getImgDataURL:getImgDataURL,
+        copyTextToClipBoard:copyTextToClipBoard
+    };
+})
 
-
-    window.bangumiUtils = utils;
-})()

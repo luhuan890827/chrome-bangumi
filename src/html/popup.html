@@ -19,7 +19,8 @@
             jquery:'lib/jquery-2.1.3.min',
             fetch:'lib/fetch',
             _:'lib/underscore-min',
-            popup:'app/popup'
+            popup:'app/popup',
+            utils:'app/utils'
         },
         shim:{
             jquery:{
@@ -28,7 +29,7 @@
         }
     });
     requirejs(['popup'],function(popup){
-        popup.init()
+        popup.init();
     })
 
 </script>
