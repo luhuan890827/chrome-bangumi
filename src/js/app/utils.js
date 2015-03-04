@@ -56,7 +56,13 @@ define(function(require,exports,module){
     }
     module.exports = {
         getImgDataURL:getImgDataURL,
-        copyTextToClipBoard:copyTextToClipBoard
+        copyTextToClipBoard:copyTextToClipBoard,
+        const:{
+            DONE:"done",
+            SYNC:"sync"
+
+
+        }
     };
 })
 

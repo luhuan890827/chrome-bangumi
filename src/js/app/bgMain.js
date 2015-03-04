@@ -14,6 +14,11 @@ requirejs.config({
         utils:'app/utils',
         rss:'app/d/rss'
 
+    },
+    shim:{
+        _:{
+            exports:"_"
+        }
     }
 });
 requirejs(['bg'],function(bg){
