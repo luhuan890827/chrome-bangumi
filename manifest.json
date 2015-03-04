@@ -10,20 +10,18 @@
   "permissions": [
     "background",
     "notifications",
-    "http://share.dmhy.org/"
-    ,"http://www.wmsub.com/"
-    ,"http://*.sinaimg.cn/"
-    ,"http://*/"
+    "http://share.dmhy.org/",
+    "http://www.wmsub.com/",
+    "http://*.sinaimg.cn/",
+    "http://*/",
+    "<all_urls>"
   ],
-  "content_security_policy":"script-src 'self';object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval';object-src 'self'",
   "background": {
     "scripts": [
       "./src/js/lib/fetch.js",
       "./src/js/lib/require-2.1.16.js",
       "./src/js/app/bgMain.js"
     ]
-  },
-  "sandbox":{
-    "pages":["src/html/popup.html"]
   }
 }

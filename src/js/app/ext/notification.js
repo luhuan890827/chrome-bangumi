@@ -8,7 +8,7 @@ define(function(require,exports,module){
         {title: "复制磁力链"}
     ]
     var cachedData = {}
-    function create(itemData) {
+    function createOrShow(itemData,reshow) {
 
         return utils
           .getImgDataURL(itemData.image)
@@ -26,8 +26,20 @@ define(function(require,exports,module){
                   }
 
                   var itemId = itemData.pubDate.getTime()+''
-                  if(itemId in cachedData){
-                      reject(itemData)
+                  if(itemId in cachedData&&reshow){
+                     //reshow
+                      chrome
+                        .notifications
+                        .update(itemId,{priority:0},function(existed){
+                        //todo
+                          if(existed){
+                              chrome
+                                .notifications
+                                .update(itemId,{priority:1},function(existed){
+                                  resolve(itemData)
+                              })
+                          }
+                      })
                   }else{
                       cachedData[itemId] = itemData;
                       chrome
@@ -42,9 +54,8 @@ define(function(require,exports,module){
 
 
     }
-    function reshow(notiId){
-        //todo http://stackoverflow.com/questions/26350747/chrome-notifications-update-or-create/26358154#26358154
-    }
+    //todo clear cached when clear notifications
+
     chrome.notifications.onButtonClicked.addListener(onNotificationButtonClick);
 
     function onNotificationButtonClick(notificationId, buttonIndex) {
@@ -60,6 +71,6 @@ define(function(require,exports,module){
 
     }
     module.exports = {
-        create:create
+        createOrShow:createOrShow
     }
 })
