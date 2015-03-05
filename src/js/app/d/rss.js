@@ -2,8 +2,20 @@
  * Created by laury.lu on 2015/3/3.
  */
 define(function (require, exports, module) {
-
+'use strict'
     var imgReg = /<img.+src="(.+)\.(jpg|png|jpeg|gif)".+>/i;
+    var sortIdReg = /\/sort_id\/(\d+)/
+    var confObj = getRssConf();
+    function getRssConf(){
+        return {
+            //订阅源
+            rssUrl:'http://share.dmhy.org/topics/rss/rss.xml',
+            //需要订阅的分类id
+            sortId:[],
+            //排序关键字
+            sortKey:''
+        }
+    }
 
     function parseItemNode(mNode) {
         var obj = {};
@@ -11,25 +23,27 @@ define(function (require, exports, module) {
         obj.link = mNode.getElementsByTagName('link')[0].textContent;
         obj.pubDate = new Date(mNode.getElementsByTagName('pubDate')[0].textContent)
         obj.magnet = mNode.getElementsByTagName('enclosure')[0].attributes[0].value;
+
+
         var desc = mNode.getElementsByTagName('description')[0].childNodes[0].textContent
 
-        //console.log(desc.match(imgReg))
+        if(desc){
+            var temp = desc.match(imgReg)
+        }
 
-        //var $ele = $(desc);
-
-        var temp = desc.match(imgReg)
-        // var temp = imgReg.exec(desc)
         if (temp) {
             obj.image = temp [1] + '.' + temp[2];
-        }else{
-            obj.image="resources/Kiseijuu.jpg"
         }
+
+        var catURL = mNode.getElementsByTagName('category')[0].attributes.domain.value
+
+        obj.sortId = catURL.match(sortIdReg)[1]
 
         return obj
     };
     function query() {
-        var url = ['http://share.dmhy.org/topics/rss', '', '', '', 'rss.xml'].join('/')
-        return fetch(url)
+
+        return fetch(confObj.rssUrl)
           .then(function (resp) {
               return resp.text();
           })
@@ -43,7 +57,14 @@ define(function (require, exports, module) {
                   bangumiInfoArr.push(obj)
 
               })
-              return bangumiInfoArr
+              var result = bangumiInfoArr
+              if(confObj.sortId.length>0){
+                  result.filter(function(ele){
+                      return confObj.sortId.indexOf(parseInt(ele.sortId))>=0
+                  })
+              }
+
+              return result
           })
     };
 

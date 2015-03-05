@@ -10,17 +10,27 @@ define(function (require, exports, module) {
         this.syncButton = new SyncButton()
     }
     function SyncButton(){
+        var TXT_AVAILABLE = '马上同步';
+        var TXT_SYNCING = '正在同步';
+        var TXT_DONE='同步完成'
         var that = this;
-        that.buttName = ko.observable('马上检查');
-
+        that.buttName = ko.observable(TXT_AVAILABLE);
+        that.clazz = ko.computed(function(){
+            if(that.buttName()!==TXT_AVAILABLE){
+                return 'disabled'
+            }else{
+                return ''
+            }
+        },that)
 
         that.checkRss = function (data, evt) {
-            //todo post message to bg
-            that.buttName('正在检查...')
+
+            that.buttName(TXT_SYNCING)
+
             sendMsg({action: utils.const.SYNC}).then(function(){
-                that.buttName('检查完成');
+                that.buttName(TXT_DONE);
                 setTimeout(function(){
-                    that.buttName('马上检查')
+                    that.buttName(TXT_AVAILABLE)
                 },1000)
             })
         }

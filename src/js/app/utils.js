@@ -27,18 +27,16 @@ define(function(require,exports,module){
                     ctx.drawImage(img, 0, 0);
                     //https://developer.mozilla.org/zh-CN/docs/Web/API/HTMLCanvasElement
                     clearTimeout(timeoutId)
-                    try{
-                        dataURL = canvas.toDataURL();
-                    }catch (e){
-                        reject(e)
-                    }
+
+                    dataURL = canvas.toDataURL();
+
 
 
                     resolve(dataURL)
                 }
                 img.src=url
             }else{
-                reject();
+                resolve();
             }
 
 

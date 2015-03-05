@@ -4,11 +4,25 @@
     <meta charset="UTF-8">
     <title></title>
     <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/popup.css"/>
 </head>
 <body>
-<!--ko with:syncButton-->
-<button type="submit" class="btn btn-default" data-bind="click:checkRss,text:buttName"></button>
-<!--/ko-->
+<div class="m-panel">
+    <!--ko with:syncButton-->
+    <button type="submit" class="btn btn-default" data-bind="click:checkRss,text:buttName,css:clazz"></button>
+    <!--/ko-->
+    <div class="m-form">
+        <div class="trigger">修改订阅设置 <span aria-hidden="true" class="glyphicon glyphicon-chevron-up"></span></div>
+
+        <div class="conf-form" >
+            <div class="sort-id"></div>
+            <div class="sort-key"></div>
+
+        </div>
+    </div>
+    <div class="bangumi-list"></div>
+</div>
+
 <script src="../js/lib/fetch.js"></script>
 <script src="../js/lib/require-2.1.16.js" data-main="../js/app/ppMain"></script>
 

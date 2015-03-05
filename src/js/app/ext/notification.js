@@ -2,6 +2,7 @@
  * Created by laury.lu on 2015/3/3.
  */
 define(function(require,exports,module){
+    //todo onremovenotification
     var utils = require('utils')
     var notificationButtons = [
         {title: "查看发布页"},
@@ -15,10 +16,10 @@ define(function(require,exports,module){
           .then(function (dataURL) {
               return new Promise(function (resolve, reject) {
                   var notSetting = {
-                      type: "image",
+                      type: dataURL?'image':'basic',
                       title: itemData.title,
                       message: "来自动漫花园",
-                      iconUrl: 'resources/icon.png',
+                      iconUrl: 'resources/icon.notification.jpg',
                       buttons: notificationButtons
                       //the doc says resources can only use local image or dataURL here
                       , imageUrl: dataURL
